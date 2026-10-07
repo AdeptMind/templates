@@ -1,10 +1,14 @@
-{{- if not .Values.argocd.enabled }}
+{{- if .Values.argocd.enabled }}
+apiVersion: cpln.io/v1
 kind: workload
-name: {{ include "nginx.name" . }}
+metadata:
+  name: {{ include "nginx.name" . }}
+  namespace: {{ .Release.Namespace }}
+org: {{ required "argocd.org is required when argocd.enabled is true" .Values.argocd.org }}
 gvc: {{ .Values.global.cpln.gvc }}
 tags:
   {{- include "nginx.tags" . | nindent 2 }}
-  cpln/checksum: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
+  cpln/checksum: {{ include (print $.Template.BasePath "/argocd-secret.yaml") . | sha256sum }}
 spec:
   type: serverless
   identityLink: //identity/{{ include "nginx.identity.name" . }}
