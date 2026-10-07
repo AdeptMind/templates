@@ -1,6 +1,10 @@
-{{- if not .Values.argocd.enabled }}
+{{- if .Values.argocd.enabled }}
+apiVersion: cpln.io/v1
 kind: policy
-name: {{ include "nginx.policy.name" . }}
+metadata:
+  name: {{ include "nginx.policy.name" . }}
+  namespace: {{ .Release.Namespace }}
+org: {{ required "argocd.org is required when argocd.enabled is true" .Values.argocd.org }}
 description: Nginx policy
 tags: {{- include "nginx.tags" . | nindent 2 }}
 bindings:

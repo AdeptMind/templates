@@ -1,0 +1,11 @@
+{{- if .Values.argocd.enabled }}
+apiVersion: cpln.io/v1
+kind: identity
+metadata:
+  name: {{ include "nginx.identity.name" . }}
+  namespace: {{ .Release.Namespace }}
+org: {{ required "argocd.org is required when argocd.enabled is true" .Values.argocd.org }}
+gvc: {{ .Values.global.cpln.gvc }}
+description: Nginx identity
+tags: {{- include "nginx.tags" . | nindent 4 }}
+{{- end }}

@@ -1,7 +1,11 @@
-{{- if not .Values.argocd.enabled }}
+{{- if .Values.argocd.enabled }}
 {{- if .Values.enableExample }}
+apiVersion: cpln.io/v1
 kind: workload
-name: {{ include "nginx.example.name" . }}
+metadata:
+  name: {{ include "nginx.example.name" . }}
+  namespace: {{ .Release.Namespace }}
+org: {{ required "argocd.org is required when argocd.enabled is true" .Values.argocd.org }}
 description: default
 tags: {{- include "nginx.tags" . | nindent 2 }}
 gvc: {{ .Values.global.cpln.gvc }}
