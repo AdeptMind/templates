@@ -1,8 +1,16 @@
-{{- if not .Values.argocd.enabled }}
+{{- if .Values.argocd.enabled }}
 {{- include "rabbitmq.validate" . -}}
 {{- if .Values.volumeset }}
+apiVersion: cpln.io/v1
 kind: volumeset
-name: {{ include "rabbitmq.volume.name" . }}
+metadata:
+  name: {{ include "rabbitmq.volume.name" . }}
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    # Argo prune would otherwise delete the volumeset, and the queue data with it.
+    cpln.io/resource-policy: keep
+org: {{ required "argocd.org is required when argocd.enabled is true" .Values.argocd.org }}
+gvc: {{ .Values.global.cpln.gvc }}
 tags: {{- include "rabbitmq.tags" . | nindent 2 }}
 spec:
   fileSystemType: {{ .Values.volumeset.volume.fileSystemType }}

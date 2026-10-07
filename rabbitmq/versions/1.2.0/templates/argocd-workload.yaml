@@ -1,4 +1,4 @@
-{{- if not .Values.argocd.enabled }}
+{{- if .Values.argocd.enabled }}
 {{- include "rabbitmq.validate" . -}}
 {{- /*
 The default user reaches RabbitMQ as ENV VARS, not through rabbitmq.conf. A
@@ -11,10 +11,14 @@ RABBITMQ_DEFAULT_PASS natively (the docker entrypoint no longer touches them).
       "RABBITMQ_DEFAULT_USER" (printf "cpln://secret/%s.username" .Values.credentialsSecretName)
       "RABBITMQ_DEFAULT_PASS" (printf "cpln://secret/%s.password" .Values.credentialsSecretName))
       (default dict .Values.env) }}
+apiVersion: cpln.io/v1
 kind: workload
-name: {{ include "rabbitmq.name" . }}
-tags: {{- include "rabbitmq.tags" . | nindent 2 }}
+metadata:
+  name: {{ include "rabbitmq.name" . }}
+  namespace: {{ .Release.Namespace }}
+org: {{ required "argocd.org is required when argocd.enabled is true" .Values.argocd.org }}
 gvc: {{ .Values.global.cpln.gvc }}
+tags: {{- include "rabbitmq.tags" . | nindent 2 }}
 spec:
   type: stateful
   containers:

@@ -36,3 +36,9 @@ volumeset:
       initialCapacity: 10 # In Gigabytes. For high-throughput-ssd minimum is '1000'
       fileSystemType: ext4 # ext4 / xfs
       performanceClass: general-purpose-ssd # high-throughput-ssd / general-purpose-ssd
+
+# Render Control Plane k8s-operator CRDs (cpln.io/v1) instead of `cpln helm` manifests,
+# so the chart can be deployed by Argo CD. Resources land in the release namespace.
+argocd:
+  enabled: false
+  org: ""
