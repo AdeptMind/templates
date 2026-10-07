@@ -7,6 +7,7 @@ metadata:
   name: {{ include "postgres.backup.name" . }}
   namespace: {{ .Release.Namespace }}
 org: {{ required "argocd.org is required when argocd.enabled is true" .Values.argocd.org }}
+gvc: {{ .Values.global.cpln.gvc }}
 description: Postgres Backup
 tags: {{- include "pg.tags" . | nindent 4 }}
 spec:
