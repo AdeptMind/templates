@@ -1,9 +1,14 @@
-{{- if not .Values.argocd.enabled }}
+{{- if .Values.argocd.enabled }}
 {{- include "mongo.validateBackupConfig" . }}
 {{- if .Values.backup.enabled }}
+apiVersion: cpln.io/v1
 kind: workload
-name: {{ include "mongo.backup.name" . }}
+metadata:
+  name: {{ include "mongo.backup.name" . }}
+  namespace: {{ .Release.Namespace }}
+org: {{ required "argocd.org is required when argocd.enabled is true" .Values.argocd.org }}
 description: MongoDB Backup
+gvc: {{ .Values.global.cpln.gvc }}
 tags:
   {{- include "mongo.tags" . | nindent 2 }}
 spec:

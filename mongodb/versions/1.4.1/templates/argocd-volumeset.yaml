@@ -1,8 +1,16 @@
-{{- if not .Values.argocd.enabled }}
+{{- if .Values.argocd.enabled }}
+{{- include "mongo.validate" . -}}
+apiVersion: cpln.io/v1
 kind: volumeset
-name: {{ include "mongo.volume.name" . }}
-description: Volume set for MongoDB data storage
+metadata:
+  name: {{ include "mongo.volume.name" . }}
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    # Argo prune would otherwise delete the volumeset, and the database data with it.
+    cpln.io/resource-policy: keep
+org: {{ required "argocd.org is required when argocd.enabled is true" .Values.argocd.org }}
 gvc: {{ .Values.global.cpln.gvc }}
+description: Volume set for MongoDB data storage
 tags:
   {{- include "mongo.tags" . | nindent 4 }}
 spec:
