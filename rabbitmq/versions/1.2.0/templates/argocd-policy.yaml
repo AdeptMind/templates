@@ -1,7 +1,11 @@
-{{- if not .Values.argocd.enabled }}
+{{- if .Values.argocd.enabled }}
 {{- include "rabbitmq.validate" . -}}
+apiVersion: cpln.io/v1
 kind: policy
-name: {{ include "rabbitmq.policy.name" . }}
+metadata:
+  name: {{ include "rabbitmq.policy.name" . }}
+  namespace: {{ .Release.Namespace }}
+org: {{ required "argocd.org is required when argocd.enabled is true" .Values.argocd.org }}
 description: RabbitMQ Policy
 tags: {{- include "rabbitmq.tags" . | nindent 4 }}
 origin: default
