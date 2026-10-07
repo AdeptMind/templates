@@ -1,7 +1,11 @@
-{{- if not .Values.argocd.enabled }}
+{{- if .Values.argocd.enabled }}
 {{- include "keycloak.validate" . }}
+apiVersion: cpln.io/v1
 kind: workload
-name: {{ include "keycloak.name" . }}
+metadata:
+  name: {{ include "keycloak.name" . }}
+  namespace: {{ .Release.Namespace }}
+org: {{ required "argocd.org is required when argocd.enabled is true" .Values.argocd.org }}
 description: Keycloak
 gvc: {{ .Values.global.cpln.gvc }}
 tags: {{- include "keycloak.tags" . | nindent 4 }}

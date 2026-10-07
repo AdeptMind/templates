@@ -1,5 +1,7 @@
+{{- if not .Values.argocd.enabled }}
 kind: identity
 name: {{ include "keycloak.identity.name" . }}
 description: Keycloak workload identity
 gvc: {{ .Values.global.cpln.gvc }}
 tags: {{- include "keycloak.tags" . | nindent 4 }}
+{{- end }}
