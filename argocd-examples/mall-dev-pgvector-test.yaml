@@ -1,0 +1,32 @@
+# Throwaway pgvector in the mall-dev GVC, deployed through the CPLN k8s operator.
+# Prerequisite (not in Git): dictionary secret `pgvector-test-credentials` with keys
+# username, password and database in org ad-nonprod-c349d9.
+# Manual sync on purpose; nothing is created until someone syncs the app.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: pgvector-test-mall-dev
+  namespace: argocd
+spec:
+  project: infra
+  source:
+    repoURL: https://github.com/AdeptMind/templates
+    targetRevision: argocd
+    path: pgvector/versions/1.0.0
+    helm:
+      releaseName: pgvector-test
+      valuesObject:
+        argocd:
+          enabled: true
+          org: ad-nonprod-c349d9
+        global:
+          cpln:
+            gvc: mall-dev
+        config:
+          credentialsSecretName: pgvector-test-credentials
+  destination:
+    name: dev
+    namespace: cpln-mall-dev
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
