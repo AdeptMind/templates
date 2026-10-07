@@ -1,7 +1,14 @@
-{{- if not .Values.argocd.enabled }}
+{{- if .Values.argocd.enabled }}
 {{- include "pg.validate" . -}}
+apiVersion: cpln.io/v1
 kind: volumeset
-name: {{ include "postgres.volume.name" . }}
+metadata:
+  name: {{ include "postgres.volume.name" . }}
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    # Argo prune would otherwise delete the volumeset, and the database data with it.
+    cpln.io/resource-policy: keep
+org: {{ required "argocd.org is required when argocd.enabled is true" .Values.argocd.org }}
 gvc: {{ .Values.global.cpln.gvc }}
 description: Postgres volumeset
 tags:

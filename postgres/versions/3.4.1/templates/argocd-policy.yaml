@@ -1,7 +1,11 @@
-{{- if not .Values.argocd.enabled }}
+{{- if .Values.argocd.enabled }}
 {{- include "pg.validate" . -}}
+apiVersion: cpln.io/v1
 kind: policy
-name: {{ include "postgres.policy.name" . }}
+metadata:
+  name: {{ include "postgres.policy.name" . }}
+  namespace: {{ .Release.Namespace }}
+org: {{ required "argocd.org is required when argocd.enabled is true" .Values.argocd.org }}
 description: Postgres policy
 tags: {{- include "pg.tags" . | nindent 4 }}
 bindings:
