@@ -1,3 +1,4 @@
+{{- if not .Values.argocd.enabled }}
 {{- if .Values.backup.enabled }}
 kind: policy
 name: {{ include "redis.backupPolicy.name" . }}
@@ -15,4 +16,5 @@ targetLinks:
   {{- else if and (hasKey .Values.redis "auth") (hasKey .Values.redis.auth "password") .Values.redis.auth.password.enabled }}
   - //secret/{{ include "redis.secretPassword.name" . }}
   {{- end }}
+{{- end }}
 {{- end }}

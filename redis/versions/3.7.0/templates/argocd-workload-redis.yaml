@@ -1,7 +1,11 @@
-{{- if not .Values.argocd.enabled }}
+{{- if .Values.argocd.enabled }}
 {{ include "redis.validateEngine" . }}{{ include "validateAuth" (dict "auth" .Values.redis.auth) }}
+apiVersion: cpln.io/v1
 kind: workload
-name: {{ include "redis.name" . }}
+metadata:
+  name: {{ include "redis.name" . }}
+  namespace: {{ .Release.Namespace }}
+org: {{ required "argocd.org is required when argocd.enabled is true" .Values.argocd.org }}
 description: Redis
 tags:
   {{- if .Values.redis.tags }}

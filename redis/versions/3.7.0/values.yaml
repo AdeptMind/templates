@@ -211,3 +211,9 @@ grafana:
   instanceSelector:
     matchLabels:
       dashboards: grafana   # must match the label on your Grafana CR
+
+# Render Control Plane k8s-operator CRDs (cpln.io/v1) instead of `cpln helm` manifests,
+# so the chart can be deployed by Argo CD. Resources land in the release namespace.
+argocd:
+  enabled: false
+  org: ""

@@ -1,7 +1,11 @@
-{{- if not .Values.argocd.enabled }}
+{{- if .Values.argocd.enabled }}
 {{- if and (hasKey .Values.redis "publicAccess") .Values.redis.publicAccess.enabled }}
+apiVersion: cpln.io/v1
 kind: domain
-name: {{ .Values.redis.publicAccess.address }}
+metadata:
+  name: {{ .Values.redis.publicAccess.address }}
+  namespace: {{ .Release.Namespace }}
+org: {{ required "argocd.org is required when argocd.enabled is true" .Values.argocd.org }}
 description: {{ .Values.redis.publicAccess.address }}
 tags: {{- include "redis.tags" . | nindent 2 }}
 spec:

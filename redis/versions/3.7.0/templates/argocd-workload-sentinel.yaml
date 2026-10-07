@@ -1,7 +1,11 @@
-{{- if not .Values.argocd.enabled }}
+{{- if .Values.argocd.enabled }}
 {{ include "redis.validateEngine" . }}{{ include "validateAuth" (dict "auth" .Values.sentinel.auth) }}
+apiVersion: cpln.io/v1
 kind: workload
-name: {{ include "redis.sentinel.name" . }}
+metadata:
+  name: {{ include "redis.sentinel.name" . }}
+  namespace: {{ .Release.Namespace }}
+org: {{ required "argocd.org is required when argocd.enabled is true" .Values.argocd.org }}
 description: Redis Sentinel
 tags:
   {{- if .Values.sentinel.tags }}
