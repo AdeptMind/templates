@@ -1,6 +1,11 @@
-{{- if not .Values.argocd.enabled }}
+{{- if .Values.argocd.enabled }}
+{{- include "mongo.validate" . -}}
+apiVersion: cpln.io/v1
 kind: policy
-name: {{ include "mongo.policy.name" . }}
+metadata:
+  name: {{ include "mongo.policy.name" . }}
+  namespace: {{ .Release.Namespace }}
+org: {{ required "argocd.org is required when argocd.enabled is true" .Values.argocd.org }}
 description: Policy granting MongoDB identity access to its database credentials
 tags:
   {{- include "mongo.tags" . | nindent 4 }}

@@ -1,8 +1,12 @@
-{{- if not .Values.argocd.enabled }}
+{{- if .Values.argocd.enabled }}
 {{- include "mongo.validate" . -}}
 {{- include "mongo.validateBackupConfig" . -}}
+apiVersion: cpln.io/v1
 kind: identity
-name: {{ include "mongo.identity.name" . }}
+metadata:
+  name: {{ include "mongo.identity.name" . }}
+  namespace: {{ .Release.Namespace }}
+org: {{ required "argocd.org is required when argocd.enabled is true" .Values.argocd.org }}
 description: MongoDB identity
 gvc: {{ .Values.global.cpln.gvc }}
 tags:
