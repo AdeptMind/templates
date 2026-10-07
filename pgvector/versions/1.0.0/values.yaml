@@ -84,3 +84,9 @@ backup:
     # secret holding `accessKey` and `secretKey`. See Storage setup in the README.
     credentialsSecretName: my-pgvector-minio-credentials
     prefix: pgvector/backups # folder name where your backups will be stored
+
+# Render Control Plane k8s-operator CRDs (cpln.io/v1) instead of `cpln helm` manifests,
+# so the chart can be deployed by Argo CD. Resources land in the release namespace.
+argocd:
+  enabled: false
+  org: ""

@@ -1,3 +1,4 @@
+{{- if not .Values.argocd.enabled }}
 {{- include "pg.validate" . -}}
 {{- if .Values.pgbouncer.enabled }}
 kind: workload
@@ -63,4 +64,5 @@ spec:
       {{- else }}
       inboundAllowWorkload: []
       {{- end }}
+{{- end }}
 {{- end }}

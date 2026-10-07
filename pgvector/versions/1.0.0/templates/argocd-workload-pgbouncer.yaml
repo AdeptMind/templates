@@ -1,8 +1,12 @@
-{{- if not .Values.argocd.enabled }}
+{{- if .Values.argocd.enabled }}
 {{- include "pgvector.validate" . -}}
 {{- if .Values.pgbouncer.enabled }}
+apiVersion: cpln.io/v1
 kind: workload
-name: {{ include "pgvector.pgbouncer.name" . }}
+metadata:
+  name: {{ include "pgvector.pgbouncer.name" . }}
+  namespace: {{ .Release.Namespace }}
+org: {{ required "argocd.org is required when argocd.enabled is true" .Values.argocd.org }}
 gvc: {{ .Values.global.cpln.gvc }}
 description: PgBouncer Connection Pooler
 tags: {{- include "pgvector.tags" . | nindent 4 }}

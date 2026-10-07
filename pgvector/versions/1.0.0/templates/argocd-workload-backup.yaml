@@ -1,14 +1,18 @@
-{{- if not .Values.argocd.enabled }}
-{{- include "pg.validate" . -}}
+{{- if .Values.argocd.enabled }}
+{{- include "pgvector.validate" . -}}
 {{- if .Values.backup.enabled }}
+apiVersion: cpln.io/v1
 kind: workload
-name: {{ include "postgres.backup.name" . }}
-description: Postgres Backup
-tags: {{- include "pg.tags" . | nindent 4 }}
+metadata:
+  name: {{ include "pgvector.backup.name" . }}
+  namespace: {{ .Release.Namespace }}
+org: {{ required "argocd.org is required when argocd.enabled is true" .Values.argocd.org }}
+description: pgvector Backup
+tags: {{- include "pgvector.tags" . | nindent 4 }}
 spec:
   type: cron
   containers:
-    - name: backup-postgres
+    - name: backup-pgvector
       cpu: {{ .Values.backup.resources.cpu | quote }}
       memory: {{ .Values.backup.resources.memory | quote }}
       env:
@@ -44,8 +48,10 @@ spec:
         - name: MINIO_SECRET_KEY
           value: 'cpln://secret/{{ .Values.backup.minio.credentialsSecretName }}.secretKey'
       {{- end }}
+        # Fully qualified: the bare short name is not reliable and resolves
+        # NXDOMAIN for some workload types.
         - name: PG_HOST
-          value: {{ include "postgres.name" . }}.{{ .Values.global.cpln.gvc }}.cpln.local
+          value: {{ include "pgvector.name" . }}.{{ .Values.global.cpln.gvc }}.cpln.local
         - name: PG_PASSWORD
           value: 'cpln://secret/{{ .Values.config.credentialsSecretName }}.password'
         - name: PG_PORT
@@ -78,7 +84,7 @@ spec:
     internal:
       inboundAllowType: none
       inboundAllowWorkload: []
-  identityLink: //identity/{{ include "postgres.identity.name" . }}
+  identityLink: //identity/{{ include "pgvector.identity.name" . }}
   job:
     concurrencyPolicy: Forbid
     historyLimit: 5

@@ -1,7 +1,11 @@
-{{- if not .Values.argocd.enabled }}
+{{- if .Values.argocd.enabled }}
 {{- include "pgvector.validate" . -}}
+apiVersion: cpln.io/v1
 kind: workload
-name: {{ include "pgvector.name" . }}
+metadata:
+  name: {{ include "pgvector.name" . }}
+  namespace: {{ .Release.Namespace }}
+org: {{ required "argocd.org is required when argocd.enabled is true" .Values.argocd.org }}
 gvc: {{ .Values.global.cpln.gvc }}
 description: pgvector Database
 tags: {{- include "pgvector.tags" . | nindent 4 }}

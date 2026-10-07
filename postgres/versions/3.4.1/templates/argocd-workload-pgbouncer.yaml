@@ -1,14 +1,18 @@
-{{- if not .Values.argocd.enabled }}
-{{- include "pgvector.validate" . -}}
+{{- if .Values.argocd.enabled }}
+{{- include "pg.validate" . -}}
 {{- if .Values.pgbouncer.enabled }}
+apiVersion: cpln.io/v1
 kind: workload
-name: {{ include "pgvector.pgbouncer.name" . }}
+metadata:
+  name: {{ include "postgres.pgbouncer.name" . }}
+  namespace: {{ .Release.Namespace }}
+org: {{ required "argocd.org is required when argocd.enabled is true" .Values.argocd.org }}
 gvc: {{ .Values.global.cpln.gvc }}
 description: PgBouncer Connection Pooler
-tags: {{- include "pgvector.tags" . | nindent 4 }}
+tags: {{- include "pg.tags" . | nindent 4 }}
 spec:
   type: serverless
-  identityLink: //identity/{{ include "pgvector.identity.name" . }}
+  identityLink: //identity/{{ include "postgres.identity.name" . }}
   containers:
     - name: pgbouncer
       image: {{ .Values.pgbouncer.image }}
@@ -17,10 +21,10 @@ spec:
       inheritEnv: false
       env:
         - name: DB_HOST
-          value: {{ include "pgvector.name" . }}.{{ .Values.global.cpln.gvc }}.cpln.local
+          value: {{ include "postgres.name" . }}.{{ .Values.global.cpln.gvc }}.cpln.local
         - name: DB_PORT
           value: '5432'
-        # Same user-created prerequisite secret the database workload reads.
+        # Same user-created prerequisite secret the Postgres workload reads.
         - name: DB_USER
           value: 'cpln://secret/{{ .Values.config.credentialsSecretName }}.username'
         - name: DB_PASSWORD

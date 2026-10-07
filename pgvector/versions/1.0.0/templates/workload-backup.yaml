@@ -1,3 +1,4 @@
+{{- if not .Values.argocd.enabled }}
 {{- include "pgvector.validate" . -}}
 {{- if .Values.backup.enabled }}
 kind: workload
@@ -86,4 +87,5 @@ spec:
     restartPolicy: Never
     schedule: {{ .Values.backup.schedule | quote }}
   supportDynamicTags: false
+{{- end }}
 {{- end }}
