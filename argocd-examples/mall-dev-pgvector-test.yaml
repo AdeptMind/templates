@@ -8,7 +8,7 @@ metadata:
   name: pgvector-test-mall-dev
   namespace: argocd
 spec:
-  project: infra
+  project: default
   source:
     repoURL: https://github.com/AdeptMind/templates
     targetRevision: argocd
