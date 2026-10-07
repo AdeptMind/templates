@@ -1,7 +1,14 @@
-{{- if not .Values.argocd.enabled }}
+{{- if .Values.argocd.enabled }}
 {{- if and (hasKey .Values.redis "persistence") .Values.redis.persistence.enabled }}
+apiVersion: cpln.io/v1
 kind: volumeset
-name: {{ include "redis.volume.name" . }}
+metadata:
+  name: {{ include "redis.volume.name" . }}
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    # Argo prune would otherwise delete the volumeset, and the redis data with it.
+    cpln.io/resource-policy: keep
+org: {{ required "argocd.org is required when argocd.enabled is true" .Values.argocd.org }}
 tags: {{- include "redis.tags" . | nindent 2 }}
 gvc: {{ .Values.global.cpln.gvc }}
 spec:

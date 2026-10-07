@@ -1,6 +1,10 @@
-{{- if not .Values.argocd.enabled }}
+{{- if .Values.argocd.enabled }}
+apiVersion: cpln.io/v1
 kind: policy
-name: {{ include "redis.sentinelPolicy.name" . }}
+metadata:
+  name: {{ include "redis.sentinelPolicy.name" . }}
+  namespace: {{ .Release.Namespace }}
+org: {{ required "argocd.org is required when argocd.enabled is true" .Values.argocd.org }}
 tags: {{- include "redis.tags" . | nindent 2 }}
 bindings:
   - permissions:

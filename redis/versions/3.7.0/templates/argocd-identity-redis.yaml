@@ -1,7 +1,11 @@
-{{- if not .Values.argocd.enabled }}
+{{- if .Values.argocd.enabled }}
 {{- include "redis.validateBackupConfig" . -}}
+apiVersion: cpln.io/v1
 kind: identity
-name: {{ include "redis.identity.name" . }}
+metadata:
+  name: {{ include "redis.identity.name" . }}
+  namespace: {{ .Release.Namespace }}
+org: {{ required "argocd.org is required when argocd.enabled is true" .Values.argocd.org }}
 description: Redis Identity
 tags: {{- include "redis.tags" . | nindent 2 }}
 gvc: {{ .Values.global.cpln.gvc }}
