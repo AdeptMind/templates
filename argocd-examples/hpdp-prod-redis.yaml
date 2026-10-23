@@ -1,0 +1,46 @@
+# hpdp-redis cache in hpdp-prod via the CPLN k8s operator (replaces marketplace redis 3.0.2).
+# maxmemory + LRU so the cache evicts instead of OOMing; persistence off (pure cache).
+# Image pinned to redis:7.2 to match the running release.
+# Manual sync on purpose; nothing is created until someone syncs the app.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: hpdp-redis-templates-hpdp-prod
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/AdeptMind/templates
+    targetRevision: argocd
+    path: redis/versions/3.7.0
+    helm:
+      releaseName: hpdp-redis
+      valuesObject:
+        argocd:
+          enabled: true
+          org: ad-prod-c3fa8f
+        global:
+          cpln:
+            gvc: hpdp-prod
+        redis:
+          image: redis:7.2
+          replicas: 3
+          resources:
+            maxCpu: 500m
+            maxMemory: 2048Mi
+            minCpu: 250m
+            minMemory: 512Mi
+          extraArgs: "--maxmemory 1500mb --maxmemory-policy allkeys-lru --save '' --appendonly no"
+          persistence:
+            enabled: false
+        sentinel:
+          image: redis:7.2
+          replicas: 3
+          persistence:
+            enabled: false
+  destination:
+    name: prod
+    namespace: cpln-hpdp-prod
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
